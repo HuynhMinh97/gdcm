@@ -18,14 +18,12 @@ const Main = () => {
         removeCookieAuth();
         console.log('logout 213');
         console.log(getCookieAuth(LOGGED_IN));
-        router.push('/auth/login', '/auth/login', { scroll: true });
       })
       .catch(() => {});
   };
   useEffect(() => {
     if (typeof window !== 'undefined') {
-      // Perform client-side data fetching
-      // ...
+      console.log('undefined');
     }
   }, []);
   return (

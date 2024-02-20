@@ -1,5 +1,5 @@
 {
-  "name": "gdcm",
+  "name": "newProject",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -12,6 +12,7 @@
     "prepare": "husky install"
   },
   "dependencies": {
+    "@emotion/styled": "^11.11.0",
     "@hookform/resolvers": "^3.3.4",
     "@reduxjs/toolkit": "^2.1.0",
     "async-mutex": "^0.4.1",

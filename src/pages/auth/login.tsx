@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { MouseEventHandler, startTransition, useState } from 'react';
 import { useRouter } from 'next/router';
 import {
   loginDataSchema,
@@ -8,6 +8,12 @@ import {
 // import dynamic from 'next/dynamic';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useLoginMutation } from '@/redux/api/auth/auth.api';
+import dynamic from 'next/dynamic';
+
+const VisibilityIcon = dynamic(() => import('@mui/icons-material/Visibility'));
+const VisibilityOffIcon = dynamic(
+  () => import('@mui/icons-material/VisibilityOff')
+);
 
 export default function Login() {
   const {
@@ -39,58 +45,112 @@ export default function Login() {
       console.log('login loi r', { error });
     }
   });
+  const handleShowPassword:
+    | MouseEventHandler<HTMLButtonElement>
+    | undefined = e => {
+    e.preventDefault();
+
+    startTransition(() => {
+      setShow(!show);
+    });
+  };
   console.log('render login');
   return (
-    <div className='flex h-full min-h-screen w-full items-center justify-center bg-white'>
-      <form onSubmit={onSubmit} method='post' className='w-[400px]'>
-        <div className='mt-8 grid w-full grid-cols-1 gap-y-6'>
-          {/* Title */}
-          <h1>Login</h1>
-          {/* Login Name */}
-          <div className='flex flex-row'>
-            <label
-              htmlFor='loginName'
-              className='flex flex-[0.3] items-center justify-start'
+    <section className='bg-gray-50 dark:bg-gray-900'>
+      <div className='flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0'>
+        <a
+          href='#'
+          className='flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white'
+        ></a>
+        <div className='w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700'>
+          <div className='p-6 space-y-4 md:space-y-6 sm:p-8'>
+            <h1 className='text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white'>
+              Sign in to your account
+            </h1>
+            <form
+              onSubmit={onSubmit}
+              method='post'
+              className='space-y-4 md:space-y-6'
+              action='#'
             >
-              Username
-            </label>
-            <input
-              type='text'
-              className={`flex-[0.6] `}
-              placeholder='username'
-              autoComplete='on'
-              {...register('username')}
-            />
+              <div>
+                <label
+                  htmlFor='email'
+                  className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                >
+                  Your name
+                </label>
+                <input
+                  type='text'
+                  id='email'
+                  className='bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                  placeholder='name@company.com'
+                  {...register('username')}
+                />
+                {errors.username?.message && (
+                  <p className='text-red-500'>
+                    {errors.username?.message.toString() ===
+                      'userNameRequired' && 'Enter your name'}
+                  </p>
+                )}
+              </div>
+              <div className='relative'>
+                <label
+                  htmlFor='password'
+                  className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                >
+                  Password
+                </label>
+                <input
+                  type={show ? 'text' : 'password'}
+                  id='password'
+                  placeholder='Enter your passwords'
+                  className='flex-[0.6] bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                  {...register('password')}
+                />
+                <button
+                  className='absolute right-[3%] top-[50%] cursor-pointer'
+                  onClick={e => handleShowPassword(e)}
+                >
+                  {show ? <VisibilityOffIcon /> : <VisibilityIcon />}
+                </button>
+              </div>
+              <div className='flex items-center justify-between'>
+                <div className='flex items-start'>
+                  <div className='flex items-center h-5'>
+                    <input
+                      id='remember'
+                      aria-describedby='remember'
+                      type='checkbox'
+                      className='w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800'
+                    />
+                  </div>
+                  <div className='ml-3 text-sm'>
+                    <label
+                      htmlFor='remember'
+                      className='text-gray-500 dark:text-gray-300'
+                    >
+                      Remember me
+                    </label>
+                  </div>
+                </div>
+                <a
+                  href='#'
+                  className='text-sm font-medium text-primary-600 hover:underline dark:text-primary-500'
+                >
+                  Forgot password?
+                </a>
+              </div>
+              <button
+                type='submit'
+                className='w-full text-white bg-[#3b82f6] hover:bg-primary-700 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-primary-500 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
+              >
+                Sign in
+              </button>
+            </form>
           </div>
-
-          {/* Password*/}
-          <div className='relative flex flex-row'>
-            <label
-              htmlFor='password'
-              className='flex flex-[0.3] items-center justify-start'
-            >
-              Password
-            </label>
-            <input
-              type={show ? 'text' : 'password'}
-              className={`flex-[0.6] `}
-              placeholder={'Password'}
-              autoComplete='on'
-              {...register('password')}
-            />
-          </div>
-          <button
-            className='right-[12%] top-[20%] cursor-pointer flex justify-center'
-            onClick={e => console.log(errors)}
-          >
-            Summit
-          </button>
         </div>
-        <p
-          className='mt-6 text-center text-sm text-blue-500 underline hover:cursor-pointer'
-          onClick={e => e}
-        ></p>
-      </form>
-    </div>
+      </div>
+    </section>
   );
 }

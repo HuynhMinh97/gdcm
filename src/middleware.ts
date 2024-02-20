@@ -5,7 +5,6 @@ import { NextRequest, NextResponse } from 'next/server';
 export function middleware(request: NextRequest) {
   const currentUrl = request.nextUrl.clone();
   const isLoggin = request.cookies?.get('logged_in')?.value;
-  console.log('middleware', isLoggin);
   // Protected Pages
   if (
     isLoggin === undefined &&
@@ -16,17 +15,5 @@ export function middleware(request: NextRequest) {
   ) {
     return NextResponse.redirect(new URL('/auth/login', request.url));
   }
-  // Not Protected Pages
-  // if (
-  //   isLoggin &&
-  //   [
-  //     '/',
-  //     '/auth/login',
-  //     '/auth/forgot_password',
-  //     '/auth/reset_password'
-  //   ].lastIndexOf(currentUrl.pathname) > -1
-  // ) {
-  //   return NextResponse.redirect(new URL('/report/main', request.url));
-  // }
   return NextResponse.next();
 }
